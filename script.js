@@ -9,7 +9,7 @@ function checkAuthentication() {
   const token = localStorage.getItem('jwt');
   if (!token) {
     console.log('No JWT token found, redirecting to login');
-    window.location.href = 'login.html';
+    window.location.href = 'index.html';
     return false;
   }
   return true;
@@ -114,7 +114,7 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
   }
   
   // Force redirect to login page
-  window.location.replace('login.html');
+  window.location.replace('index.html');
 });
 
 // GraphQL queries
@@ -259,7 +259,7 @@ async function fetchUserData() {
     const token = localStorage.getItem('jwt');
     if (!token) {
       console.error('No token found');
-      window.location.replace('login.html');
+      window.location.replace('index.html');
       return;
     }
 
@@ -285,7 +285,7 @@ async function fetchUserData() {
     if (response.status === 401 || response.status === 403) {
       console.error('Unauthorized access, clearing token and redirecting to login');
       localStorage.removeItem('jwt');
-      window.location.replace('login.html');
+      window.location.replace('index.html');
       return;
     }
     
@@ -298,7 +298,7 @@ async function fetchUserData() {
           data.errors[0].message?.includes('unauthorized')) {
         console.error('Invalid JWT token, redirecting to login...');
         localStorage.removeItem('jwt');
-        window.location.replace('login.html');
+        window.location.replace('index.html');
         return;
       }
       // Redirect to 404 page instead of error page
@@ -357,7 +357,7 @@ async function fetchUserData() {
     // If there's a network error or other issue, check if it's authentication related
     if (error.message.includes('unauthorized') || error.message.includes('401')) {
       localStorage.removeItem('jwt');
-      window.location.replace('login.html');
+      window.location.replace('index.html');
       return;
     }
     // Redirect to 404 page instead of error page
@@ -584,7 +584,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Additional security check - verify token is still valid
   const token = localStorage.getItem('jwt');
   if (!token) {
-    window.location.replace('login.html');
+    window.location.replace('index.html');
     return;
   }
   
