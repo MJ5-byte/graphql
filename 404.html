@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - Reboot01</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #ffffff;
+            background: linear-gradient(135deg, #0f172a 0%, #581c87 50%, #0f172a 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 404 Page Styles */
+        .error-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .background-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #0f172a 0%, #581c87 50%, #0f172a 100%);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.2;
+        }
+
+        .error-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            z-index: 10;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .error-number {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 10px 30px rgba(6, 182, 212, 0.3);
+            animation: numberGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes numberGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.3));
+            }
+            50% {
+                filter: drop-shadow(0 0 30px rgba(6, 182, 212, 0.6));
+            }
+        }
+
+        .error-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .error-message {
+            font-size: 1.125rem;
+            color: #94a3b8;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .game-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .game-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        #gameCanvas {
+            border: 3px solid rgba(6, 182, 212, 0.4);
+            border-radius: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            cursor: crosshair;
+            margin-bottom: 1.5rem;
+            max-width: 100%;
+            height: auto;
+            align-self: center;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            font-size: 1.125rem;
+            gap: 1.5rem;
+        }
+
+        .score, .lives {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #06b6d4;
+            font-weight: 600;
+            font-size: 1.125rem;
+            flex: 1;
+            text-align: center;
+        }
+
+        .controls {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            line-height: 1.5;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 1rem;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+            min-width: 160px;
+            min-height: 56px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            color: white;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 3rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            display: none;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .game-over h2 {
+            color: #fbbf24;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .game-over p {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            font-size: 1.25rem;
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(6, 182, 212, 0.6);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .error-container {
+                padding: 0.75rem;
+            }
+
+            .error-card {
+                padding: 2rem;
+                max-width: 550px;
+            }
+
+            .error-number {
+                font-size: 4rem;
+                margin-bottom: 1.25rem;
+            }
+
+            .error-title {
+                font-size: 1.75rem;
+                margin-bottom: 0.875rem;
+            }
+
+            .error-message {
+                font-size: 1rem;
+                margin-bottom: 2.5rem;
+            }
+
+            .game-container {
+                padding: 1.75rem;
+                margin-bottom: 2rem;
+            }
+
+            .game-title {
+                font-size: 1.375rem;
+                margin-bottom: 1.25rem;
+            }
+
+            #gameCanvas {
+                margin-bottom: 1.25rem;
+            }
+
+            .game-info {
+                margin-bottom: 1.25rem;
+                font-size: 1rem;
+                gap: 1.25rem;
+            }
+
+            .score, .lives {
+                padding: 0.875rem 1.25rem;
+                font-size: 1rem;
+            }
+
+            .controls {
+                font-size: 0.95rem;
+                margin-bottom: 1.25rem;
+                padding: 0.875rem;
+            }
+
+            .buttons {
+                gap: 1.25rem;
+            }
+
+            .btn {
+                padding: 0.875rem 1.75rem;
+                font-size: 1rem;
+                min-width: 150px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .error-container {
+                padding: 0.5rem;
+                min-height: 100vh;
+                align-items: center;
+            }
+
+            .error-card {
+                padding: 1.75rem;
+                margin: 0;
+                border-radius: 1.25rem;
+                max-width: 500px;
+            }
+
+            .error-number {
+                font-size: 3.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .error-title {
+                font-size: 1.5rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .error-message {
+                font-size: 0.95rem;
+                margin-bottom: 2rem;
+                padding: 0 0.5rem;
+            }
+
+            .game-container {
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .game-title {
+                font-size: 1.25rem;
+                margin-bottom: 1rem;
+            }
+
+            #gameCanvas {
+                width: 100%;
+                max-width: 450px;
+                height: 320px;
+                margin-bottom: 1rem;
+            }
+
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                padding: 1rem 1.5rem;
+                font-size: 1rem;
+                min-width: auto;
+            }
+
+            .game-info {
+                flex-direction: row;
+                gap: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .score, .lives {
+                padding: 0.75rem 1rem;
+                font-size: 0.95rem;
+            }
+
+            .controls {
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+                padding: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .error-container {
+                padding: 0.25rem;
+            }
+
+            .error-card {
+                padding: 1.5rem;
+            }
+
+            .error-number {
+                font-size: 3rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .error-title {
+                font-size: 1.25rem;
+                margin-bottom: 0.625rem;
+            }
+
+            .error-message {
+                font-size: 0.9rem;
+                margin-bottom: 1.75rem;
+                padding: 0 0.25rem;
+            }
+
+            .game-container {
+                padding: 1.25rem;
+                margin-bottom: 1.75rem;
+            }
+
+            .game-title {
+                font-size: 1.125rem;
+                margin-bottom: 0.875rem;
+            }
+
+            #gameCanvas {
+                width: 100%;
+                max-width: 400px;
+                height: 280px;
+                margin-bottom: 0.875rem;
+            }
+
+            .game-info {
+                flex-direction: row;
+                gap: 0.875rem;
+                margin-bottom: 0.875rem;
+            }
+
+            .score, .lives {
+                padding: 0.625rem 0.875rem;
+                font-size: 0.9rem;
+            }
+
+            .controls {
+                font-size: 0.85rem;
+                margin-bottom: 0.875rem;
+                padding: 0.625rem;
+            }
+
+            .buttons {
+                gap: 0.875rem;
+            }
+
+            .btn {
+                padding: 0.875rem 1.25rem;
+                font-size: 0.95rem;
+                max-width: 260px;
+            }
+
+            .game-over {
+                padding: 2rem;
+                margin: 0 0.75rem;
+            }
+
+            .game-over h2 {
+                font-size: 1.5rem;
+            }
+
+            .game-over p {
+                font-size: 1rem;
+            }
+        }
+
+        /* Landscape orientation for phones */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .error-card {
+                padding: 1.5rem;
+            }
+
+            .error-number {
+                font-size: 2.75rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .error-title {
+                font-size: 1.125rem;
+                margin-bottom: 0.625rem;
+            }
+
+            .error-message {
+                font-size: 0.85rem;
+                margin-bottom: 1rem;
+            }
+
+            .game-container {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .game-title {
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+            }
+
+            #gameCanvas {
+                max-width: 350px;
+                height: 220px;
+                margin-bottom: 0.75rem;
+            }
+
+            .buttons {
+                flex-direction: row;
+                gap: 1rem;
+            }
+
+            .btn {
+                max-width: 160px;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="background-overlay"></div>
+        
+        <div class="error-card">
+            <div class="error-number">404</div>
+            <h1 class="error-title">Page Not Found</h1>
+            <p class="error-message">
+                Oops! The page you're looking for doesn't exist. But don't worry, 
+                you can play a quick game while you're here or head back to safety.
+            </p>
+
+            <div class="game-container">
+                <h2 class="game-title">🚀 Space Defender</h2>
+                <canvas id="gameCanvas" width="400" height="300"></canvas>
+                
+                <div class="game-info">
+                    <div class="score">Score: <span id="score">0</span></div>
+                    <div class="lives">Lives: <span id="lives">3</span></div>
+                </div>
+                
+                <div class="controls">
+                    <strong>Controls:</strong> Use mouse to move, click to shoot. 
+                    Destroy asteroids and avoid enemy ships!
+                </div>
+            </div>
+
+            <div class="buttons">
+                <a href="login.html" class="btn btn-primary">Go to Login</a>
+                <a href="profile.html" class="btn btn-secondary">Go to Dashboard</a>
+            </div>
+        </div>
+
+        <div class="game-over" id="gameOver">
+            <h2>Game Over!</h2>
+            <p>Final Score: <span id="finalScore">0</span></p>
+            <button class="btn btn-primary" onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
+
+    <div class="floating-particles" id="particles"></div>
+
+    <script>
+        // Game variables
+        let canvas, ctx, player, bullets, enemies, asteroids, score, lives, gameLoop, isGameRunning, isInvincible;
+        
+        // Initialize game
+        function initGame() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            canvas.width = 400;
+            canvas.height = 300;
+            
+            // Game state
+            score = 0;
+            lives = 3;
+            isGameRunning = true;
+            isInvincible = false;
+            
+            // Player
+            player = {
+                x: canvas.width / 2,
+                y: canvas.height - 30,
+                width: 30,
+                height: 20,
+                speed: 5
+            };
+            
+            // Arrays
+            bullets = [];
+            enemies = [];
+            asteroids = [];
+            
+            // Update UI immediately
+            updateScore();
+            updateLives();
+            
+            // Start game loop
+            gameLoop = setInterval(updateGame, 1000/60);
+            
+            // Event listeners
+            canvas.addEventListener('mousemove', movePlayer);
+            canvas.addEventListener('click', shoot);
+            
+            // Spawn enemies and asteroids
+            setInterval(spawnEnemy, 2000);
+            setInterval(spawnAsteroid, 1500);
+        }
+        
+        // Move player with mouse
+        function movePlayer(e) {
+            if (!isGameRunning) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            
+            player.x = mouseX - player.width / 2;
+            
+            // Keep player in bounds
+            if (player.x < 0) player.x = 0;
+            if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
+        }
+        
+        // Shoot bullet
+        function shoot() {
+            if (!isGameRunning) return;
+            
+            bullets.push({
+                x: player.x + player.width / 2 - 2,
+                y: player.y,
+                width: 4,
+                height: 10,
+                speed: 7
+            });
+        }
+        
+        // Spawn enemy
+        function spawnEnemy() {
+            if (!isGameRunning) return;
+            
+            enemies.push({
+                x: Math.random() * (canvas.width - 20),
+                y: -20,
+                width: 20,
+                height: 20,
+                speed: 2 + Math.random() * 2,
+                hitPlayer: false
+            });
+        }
+        
+        // Spawn asteroid
+        function spawnAsteroid() {
+            if (!isGameRunning) return;
+            
+            asteroids.push({
+                x: Math.random() * (canvas.width - 15),
+                y: -15,
+                width: 15,
+                height: 15,
+                speed: 0.5 + Math.random() * 1,
+                hitPlayer: false
+            });
+        }
+        
+        // Take damage
+        function takeDamage() {
+            if (isInvincible) return;
+            
+            lives--;
+            updateLives();
+            
+            if (lives <= 0) {
+                gameOver();
+            } else {
+                // Brief invincibility period
+                isInvincible = true;
+                setTimeout(() => {
+                    isInvincible = false;
+                }, 1500);
+            }
+        }
+        
+        // Update game
+        function updateGame() {
+            if (!isGameRunning) return;
+            
+            // Clear canvas
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw player (blink if invincible)
+            if (!isInvincible || Math.floor(Date.now() / 100) % 2) {
+                ctx.fillStyle = '#06b6d4';
+                ctx.fillRect(player.x, player.y, player.width, player.height);
+            }
+            
+            // Update and draw bullets
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                const bullet = bullets[i];
+                bullet.y -= bullet.speed;
+                
+                ctx.fillStyle = '#fbbf24';
+                ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+                
+                // Remove bullets that are off screen
+                if (bullet.y < 0) {
+                    bullets.splice(i, 1);
+                }
+            }
+            
+            // Update and draw enemies
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                const enemy = enemies[i];
+                enemy.y += enemy.speed;
+                
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                
+                // Check collision with bullets
+                for (let j = bullets.length - 1; j >= 0; j--) {
+                    const bullet = bullets[j];
+                    if (checkCollision(bullet, enemy)) {
+                        enemies.splice(i, 1);
+                        bullets.splice(j, 1);
+                        score += 10;
+                        updateScore();
+                        break;
+                    }
+                }
+                
+                // Check collision with player (only if not already hit)
+                if (!enemy.hitPlayer && checkCollision(enemy, player)) {
+                    enemy.hitPlayer = true;
+                    takeDamage();
+                }
+                
+                // Remove enemies that are off screen
+                if (enemy.y > canvas.height) {
+                    enemies.splice(i, 1);
+                }
+            }
+            
+            // Update and draw asteroids
+            for (let i = asteroids.length - 1; i >= 0; i--) {
+                const asteroid = asteroids[i];
+                asteroid.y += asteroid.speed;
+                
+                ctx.fillStyle = '#6b7280';
+                ctx.fillRect(asteroid.x, asteroid.y, asteroid.width, asteroid.height);
+                
+                // Check collision with bullets
+                for (let j = bullets.length - 1; j >= 0; j--) {
+                    const bullet = bullets[j];
+                    if (checkCollision(bullet, asteroid)) {
+                        asteroids.splice(i, 1);
+                        bullets.splice(j, 1);
+                        score += 5;
+                        updateScore();
+                        break;
+                    }
+                }
+                
+                // Check collision with player (only if not already hit)
+                if (!asteroid.hitPlayer && checkCollision(asteroid, player)) {
+                    asteroid.hitPlayer = true;
+                    takeDamage();
+                }
+                
+                // Remove asteroids that are off screen
+                if (asteroid.y > canvas.height) {
+                    asteroids.splice(i, 1);
+                }
+            }
+        }
+        
+        // Check collision between two objects
+        function checkCollision(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+        
+        // Update score display
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+        }
+        
+        // Update lives display
+        function updateLives() {
+            document.getElementById('lives').textContent = lives;
+        }
+        
+        // Game over
+        function gameOver() {
+            isGameRunning = false;
+            clearInterval(gameLoop);
+            
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('gameOver').style.display = 'block';
+        }
+        
+        // Restart game
+        function restartGame() {
+            document.getElementById('gameOver').style.display = 'none';
+            initGame();
+        }
+        
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Initialize everything when page loads
+        window.addEventListener('load', function() {
+            createParticles();
+            initGame();
+        });
+    </script>
+</body>
+</html> 

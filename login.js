@@ -21,17 +21,23 @@ document.getElementById("login-form").addEventListener("submit", async function 
             const errorData = await response.json();
             console.error("Login failed:", errorData);
             
-            // Show animated character with error message
+            // Show animated character with error message for user-related errors
             let errorMessage = "Oops! Something went wrong!";
             if (response.status === 401) {
                 errorMessage = "Wrong credentials! Try again!";
+                showErrorCharacter(errorMessage);
+                return;
             } else if (response.status === 404) {
                 errorMessage = "User not found!";
+                showErrorCharacter(errorMessage);
+                return;
             } else if (response.status >= 500) {
-                errorMessage = "Server error! Try later!";
+                // For server errors, redirect to 404 page with mini-game
+                window.location.replace('404.html');
+                return;
             }
             
-            // Show the animated character
+            // For other errors, show the animated character
             showErrorCharacter(errorMessage);
             return;
         }
@@ -49,6 +55,7 @@ document.getElementById("login-form").addEventListener("submit", async function 
         }
     } catch (error) {
         console.error("Login error:", error);
-        showErrorCharacter("Network error! Check connection!");
+        // For network errors, redirect to 404 page with mini-game
+        window.location.replace('404.html');
     }
 });

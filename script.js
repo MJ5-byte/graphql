@@ -4,10 +4,63 @@ let headers = {
   'Authorization': `Bearer ${localStorage.getItem('jwt')}`
 };
 
-// Check authentication
-if (!localStorage.getItem('jwt')) {
-  window.location.href = 'login.html';
+// Enhanced authentication check function
+function checkAuthentication() {
+  const token = localStorage.getItem('jwt');
+  if (!token) {
+    console.log('No JWT token found, redirecting to login');
+    window.location.href = 'login.html';
+    return false;
+  }
+  return true;
 }
+
+// Check authentication on page load
+if (!checkAuthentication()) {
+  // This will redirect, so we don't need to continue
+  throw new Error('Authentication failed');
+}
+
+// Add event listeners for browser navigation
+window.addEventListener('pageshow', function(event) {
+  // This event fires when the page is shown, including from back/forward cache
+  console.log('Page show event triggered');
+  if (!checkAuthentication()) {
+    return;
+  }
+});
+
+window.addEventListener('focus', function() {
+  // This event fires when the window gains focus (user switches back to tab)
+  console.log('Window focus event triggered');
+  if (!checkAuthentication()) {
+    return;
+  }
+});
+
+// Handle visibility change (user switches tabs)
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) {
+    console.log('Page became visible');
+    if (!checkAuthentication()) {
+      return;
+    }
+  }
+});
+
+// Clear sensitive data when user leaves the page
+window.addEventListener('beforeunload', function() {
+  // Don't clear localStorage here as it might interfere with normal navigation
+  // But we can clear any sensitive session data
+  sessionStorage.clear();
+});
+
+// Periodic authentication check (every 30 seconds)
+setInterval(function() {
+  if (!checkAuthentication()) {
+    return;
+  }
+}, 30000);
 
 // Get user ID from JWT token
 function getUserIdFromToken() {
@@ -47,8 +100,21 @@ function getUserIdFromToken() {
 
 // Logout functionality
 document.getElementById('logoutBtn').addEventListener('click', () => {
+  // Clear all authentication data
   localStorage.removeItem('jwt');
-  window.location.href = 'login.html';
+  sessionStorage.clear();
+  
+  // Clear any cached data
+  if ('caches' in window) {
+    caches.keys().then(function(names) {
+      for (let name of names) {
+        caches.delete(name);
+      }
+    });
+  }
+  
+  // Force redirect to login page
+  window.location.replace('login.html');
 });
 
 // GraphQL queries
@@ -193,7 +259,7 @@ async function fetchUserData() {
     const token = localStorage.getItem('jwt');
     if (!token) {
       console.error('No token found');
-      window.location.href = 'login.html';
+      window.location.replace('login.html');
       return;
     }
 
@@ -214,17 +280,29 @@ async function fetchUserData() {
     });
 
     console.log('Response status:', response.status);
+    
+    // Handle unauthorized responses
+    if (response.status === 401 || response.status === 403) {
+      console.error('Unauthorized access, clearing token and redirecting to login');
+      localStorage.removeItem('jwt');
+      window.location.replace('login.html');
+      return;
+    }
+    
     const data = await response.json();
     
     if (data.errors) {
       console.error('GraphQL Errors:', JSON.stringify(data.errors, null, 2));
-      if (data.errors[0].extensions?.code === 'invalid-jwt') {
+      if (data.errors[0].extensions?.code === 'invalid-jwt' || 
+          data.errors[0].message?.includes('JWT') ||
+          data.errors[0].message?.includes('unauthorized')) {
         console.error('Invalid JWT token, redirecting to login...');
         localStorage.removeItem('jwt');
-        window.location.href = 'login.html';
+        window.location.replace('login.html');
         return;
       }
-      alert('Error fetching data. Please try logging in again.');
+      // Redirect to 404 page instead of error page
+      window.location.replace('404.html');
       return;
     }
     
@@ -232,7 +310,8 @@ async function fetchUserData() {
     
     if (!data.data || !data.data.user || !Array.isArray(data.data.user) || data.data.user.length === 0) {
       console.error('Invalid data structure received:', data);
-      alert('Error: Invalid data received from server');
+      // Redirect to 404 page instead of error page
+      window.location.replace('404.html');
       return;
     }
 
@@ -275,7 +354,14 @@ async function fetchUserData() {
     }
   } catch (error) {
     console.error('Error fetching user data:', error);
-    alert('Error fetching data. Please try again.');
+    // If there's a network error or other issue, check if it's authentication related
+    if (error.message.includes('unauthorized') || error.message.includes('401')) {
+      localStorage.removeItem('jwt');
+      window.location.replace('login.html');
+      return;
+    }
+    // Redirect to 404 page instead of error page
+    window.location.replace('404.html');
   }
 }
 
@@ -490,9 +576,18 @@ function createResultsGraph(results) {
 
 // Initialize the page
 document.addEventListener('DOMContentLoaded', () => {
-  if (!localStorage.getItem('jwt')) {
-    window.location.href = 'login.html';
+  // Check authentication first
+  if (!checkAuthentication()) {
     return;
   }
+  
+  // Additional security check - verify token is still valid
+  const token = localStorage.getItem('jwt');
+  if (!token) {
+    window.location.replace('login.html');
+    return;
+  }
+  
+  // Fetch user data
   fetchUserData();
 });
