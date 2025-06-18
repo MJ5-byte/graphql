@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reboot01 - Profile Dashboard</title>
+    <link rel="stylesheet" href="profile.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>Reboot01 Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <span id="heroWelcome" class="welcome-text">Welcome back!</span>
+                    <button id="logoutBtn" class="logout-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Hero Section -->
+            <div class="hero-section">
+                <div class="hero-content">
+                    <div class="profile-avatar" id="profileAvatar">U</div>
+                    <div class="hero-text">
+                        <h2 id="userNameHero">User</h2>
+                        <p>Welcome back to your learning journey!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <!-- Profile Info -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <h3>Profile</h3>
+                    </div>
+                    <div class="stat-content">
+                        <p><span>Login:</span> <span id="userLogin">N/A</span></p>
+                        <p><span>Email:</span> <span id="userEmail">N/A</span></p>
+                        <p><span>Level:</span> <span id="userLevel">N/A</span></p>
+                    </div>
+                </div>
+
+                <!-- XP Stats -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                        <h3>Experience</h3>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-value" id="userXP">N/A</p>
+                        <p class="stat-label">Total XP Earned</p>
+                    </div>
+                </div>
+
+                <!-- Audit Stats -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <h3>Audits</h3>
+                    </div>
+                    <div class="stat-content">
+                        <p><span>Done:</span> <span id="auditsDone">--</span></p>
+                        <p><span>Received:</span> <span id="auditsReceived">--</span></p>
+                    </div>
+                </div>
+
+                <!-- Audit Ratio -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"></path>
+                        </svg>
+                        <h3>Audit Ratio</h3>
+                    </div>
+                    <div class="stat-content audit-ratio-content">
+                        <div class="ratio-circle">
+                            <svg width="80" height="80" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="48" stroke="#374151" stroke-width="4" fill="none"/>
+                                <circle id="auditRatioRing" cx="50" cy="50" r="48" stroke="#06b6d4" stroke-width="4" fill="none" 
+                                        stroke-dasharray="301.59" stroke-dashoffset="301.59" 
+                                        style="transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 0.5s ease-in-out;"/>
+                            </svg>
+                        </div>
+                        <div class="ratio-text">
+                            <p class="ratio-value" id="auditRatio">--</p>
+                            <p class="ratio-message" id="auditMessage"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <!-- XP Progress Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                        <h3>XP Progress</h3>
+                    </div>
+                    <div class="chart-content">
+                        <div id="xpGraph"></div>
+                    </div>
+                </div>
+
+                <!-- Results Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                            <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                        </svg>
+                        <h3>Project Results</h3>
+                    </div>
+                    <div class="chart-content">
+                        <div id="resultsGraph"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
