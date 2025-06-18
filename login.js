@@ -33,7 +33,7 @@ document.getElementById("login-form").addEventListener("submit", async function 
                 return;
             } else if (response.status >= 500) {
                 // For server errors, redirect to 404 page with mini-game
-                window.location.replace('404.html');
+                window.location.replace('404');
                 return;
             }
             
@@ -48,7 +48,7 @@ document.getElementById("login-form").addEventListener("submit", async function 
         
         if (token) {
             localStorage.setItem("jwt", token);
-            window.location.href = "profile.html";
+            window.location.href = "profile";
         } else {
             console.error('No token received');
             showErrorCharacter("Invalid server response!");
@@ -56,6 +56,6 @@ document.getElementById("login-form").addEventListener("submit", async function 
     } catch (error) {
         console.error("Login error:", error);
         // For network errors, redirect to 404 page with mini-game
-        window.location.replace('404.html');
+        window.location.replace('404');
     }
 });

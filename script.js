@@ -9,7 +9,7 @@ function checkAuthentication() {
   const token = localStorage.getItem('jwt');
   if (!token) {
     console.log('No JWT token found, redirecting to login');
-    window.location.href = 'index.html';
+    window.location.href = 'login';
     return false;
   }
   return true;
@@ -114,7 +114,7 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
   }
   
   // Force redirect to login page
-  window.location.replace('index.html');
+  window.location.replace('/login');
 });
 
 // GraphQL queries
@@ -259,7 +259,7 @@ async function fetchUserData() {
     const token = localStorage.getItem('jwt');
     if (!token) {
       console.error('No token found');
-      window.location.replace('index.html');
+      window.location.replace('login');
       return;
     }
 
@@ -285,7 +285,7 @@ async function fetchUserData() {
     if (response.status === 401 || response.status === 403) {
       console.error('Unauthorized access, clearing token and redirecting to login');
       localStorage.removeItem('jwt');
-      window.location.replace('index.html');
+      window.location.replace('login');
       return;
     }
     
@@ -298,11 +298,11 @@ async function fetchUserData() {
           data.errors[0].message?.includes('unauthorized')) {
         console.error('Invalid JWT token, redirecting to login...');
         localStorage.removeItem('jwt');
-        window.location.replace('index.html');
+        window.location.replace('login');
         return;
       }
       // Redirect to 404 page instead of error page
-      window.location.replace('404.html');
+      window.location.replace('404');
       return;
     }
     
@@ -311,7 +311,7 @@ async function fetchUserData() {
     if (!data.data || !data.data.user || !Array.isArray(data.data.user) || data.data.user.length === 0) {
       console.error('Invalid data structure received:', data);
       // Redirect to 404 page instead of error page
-      window.location.replace('404.html');
+      window.location.replace('404');
       return;
     }
 
@@ -357,11 +357,11 @@ async function fetchUserData() {
     // If there's a network error or other issue, check if it's authentication related
     if (error.message.includes('unauthorized') || error.message.includes('401')) {
       localStorage.removeItem('jwt');
-      window.location.replace('index.html');
+      window.location.replace('login');
       return;
     }
     // Redirect to 404 page instead of error page
-    window.location.replace('404.html');
+    window.location.replace('404');
   }
 }
 
@@ -584,7 +584,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Additional security check - verify token is still valid
   const token = localStorage.getItem('jwt');
   if (!token) {
-    window.location.replace('index.html');
+    window.location.replace('login');
     return;
   }
   

@@ -1,4 +1,5 @@
-/profile     /profile.html     200
-/404         /404.html         404
-/            /index.html       200
-/*           /404.html         404
+/login      /login.html       200
+/profile    /profile.html     200
+/404        /404.html         404
+/           /login.html       200
+/*          /404.html         404
