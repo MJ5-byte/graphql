@@ -48,7 +48,7 @@ document.getElementById("login-form").addEventListener("submit", async function 
         
         if (token) {
             localStorage.setItem("jwt", token);
-            window.location.href = "profile";
+            window.location.href = "/profile";
         } else {
             console.error('No token received');
             showErrorCharacter("Invalid server response!");
