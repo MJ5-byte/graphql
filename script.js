@@ -315,6 +315,7 @@ async function fetchUserData() {
       return;
     }
 
+    
     const userData = data.data.user[0];
     console.log('User data:', userData);
     
