@@ -2,7 +2,7 @@ import { GRAPHQL_ENDPOINT, getAuthHeaders } from './config.js';
 import { checkAuthentication, setupAuthListeners } from './auth.js';
 import { getUserIdFromToken } from './jwt.js';
 import { USER_QUERY } from './graphql.js';
-import { updateProfileInfo } from '../ui.js';
+import { updateProfileInfo } from './ui.js';
 import { createXPGraph, createResultsGraph } from './charts.js';
 import { setupLogoutButton } from './logout.js';
 
