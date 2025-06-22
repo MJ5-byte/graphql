@@ -8,7 +8,6 @@ let headers = {
 function checkAuthentication() {
   const token = localStorage.getItem('jwt');
   if (!token) {
-    console.log('No JWT token found, redirecting to login');
     window.location.href = '/login';
     return false;
   }
@@ -24,7 +23,6 @@ if (!checkAuthentication()) {
 // Add event listeners for browser navigation
 window.addEventListener('pageshow', function(event) {
   // This event fires when the page is shown, including from back/forward cache
-  console.log('Page show event triggered');
   if (!checkAuthentication()) {
     return;
   }
@@ -32,7 +30,6 @@ window.addEventListener('pageshow', function(event) {
 
 window.addEventListener('focus', function() {
   // This event fires when the window gains focus (user switches back to tab)
-  console.log('Window focus event triggered');
   if (!checkAuthentication()) {
     return;
   }
@@ -41,7 +38,6 @@ window.addEventListener('focus', function() {
 // Handle visibility change (user switches tabs)
 document.addEventListener('visibilitychange', function() {
   if (!document.hidden) {
-    console.log('Page became visible');
     if (!checkAuthentication()) {
       return;
     }
@@ -71,18 +67,13 @@ function getUserIdFromToken() {
   }
   
   try {
-    console.log('Raw token:', token);
     const base64Url = token.split('.')[1];
-    console.log('Base64Url:', base64Url);
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    console.log('Base64:', base64);
     const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
       return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
-    console.log('Decoded payload:', jsonPayload);
     
     const payload = JSON.parse(jsonPayload);
-    console.log('Parsed payload:', payload);
     
     // Get user ID from Hasura claims
     const hasuraClaims = payload['https://hasura.io/jwt/claims'];
@@ -265,7 +256,6 @@ async function fetchUserData() {
 
     // Remove any quotes from the token if they exist
     const cleanToken = token.replace(/^"|"$/g, '');
-    console.log('Using token:', cleanToken);
     
     const response = await fetch(GRAPHQL_ENDPOINT, {
       method: 'POST',
@@ -279,7 +269,6 @@ async function fetchUserData() {
       })
     });
 
-    console.log('Response status:', response.status);
     
     // Handle unauthorized responses
     if (response.status === 401 || response.status === 403) {
@@ -306,7 +295,6 @@ async function fetchUserData() {
       return;
     }
     
-    console.log('Full response data:', JSON.stringify(data, null, 2));
     
     if (!data.data || !data.data.user || !Array.isArray(data.data.user) || data.data.user.length === 0) {
       console.error('Invalid data structure received:', data);
@@ -317,7 +305,6 @@ async function fetchUserData() {
 
     
     const userData = data.data.user[0];
-    console.log('User data:', userData);
     
     // Get the user's level from event_user data
     const eventUserData = data.data.event_user;
@@ -325,12 +312,10 @@ async function fetchUserData() {
     if (eventUserData && eventUserData.length > 0) {
       // Filter event_user data for the current user
       const userEventData = eventUserData.filter(eu => eu.userLogin === userData.login);
-      console.log('User event data:', userEventData);
       
       if (userEventData.length > 0) {
         // Get the highest level from all events for this user
         userLevel = Math.max(...userEventData.map(eu => eu.level || 0));
-        console.log('User level:', userLevel);
       }
     }
     
@@ -341,14 +326,12 @@ async function fetchUserData() {
     
     // Create graphs if data is available
     if (userData.TransactionsFiltered1 && userData.TransactionsFiltered1.length > 0) {
-      console.log('Creating XP graph with transactions:', userData.TransactionsFiltered1);
       createXPGraph(userData.TransactionsFiltered1);
     } else {
       console.log('No transactions available for user');
     }
     
     if (data.data.toad_session_game_results && data.data.toad_session_game_results.length > 0) {
-      console.log('Creating results graph with data:', data.data.toad_session_game_results);
       createResultsGraph(data.data.toad_session_game_results);
     } else {
       console.log('No game results data available');
