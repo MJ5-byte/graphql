@@ -1,3 +1,6 @@
+import { formatBytes } from './formatBytes.js';
+import { USER_QUERY, XP_HISTORY_QUERY } from './query.js';
+
 const GRAPHQL_ENDPOINT = 'https://learn.reboot01.com/api/graphql-engine/v1/graphql';
 let headers = {
   'Content-Type': 'application/json',
@@ -107,72 +110,6 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
   // Force redirect to login page
   window.location.replace('/login');
 });
-
-// GraphQL queries
-const USER_QUERY = `
-  query User {
-    user {
-      auditRatio
-      email
-      firstName
-      lastName
-      login
-      totalDown
-      totalUp
-      groupsByCaptainid {
-        campus
-        captainId
-        captainLogin
-        createdAt
-        eventId
-        id
-        objectId
-        path
-        status
-        updatedAt
-      }
-      TransactionsFiltered1: transactions(where: {type: {_eq: "xp"}, path: { _like: "%bh-module%", _nregex: "^.(piscine-js/|piscine-rust/|piscine-ui/|piscine-ux/)." }}) {
-        amount
-        type
-        path
-        createdAt
-      }
-    }
-    event_user(where: { eventId: { _in: [72, 20, 250] } }) {
-      level
-      userId
-      userLogin
-      eventId
-    }
-    toad_session_game_results {
-      level
-      result {
-        name
-      }
-      attempts
-    }
-  }
-`;
-
-const XP_HISTORY_QUERY = `
-  query {
-    transaction(where: {type: {_eq: "xp"}}, order_by: {createdAt: asc}) {
-      amount
-      createdAt
-    }
-  }
-`;
-
-let currentUserId = null;
-
-// Helper to format bytes
-function formatBytes(bytes) {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
 
 // Update profile information and audits card
 function updateProfileInfo(user) {
