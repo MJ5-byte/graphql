@@ -1,5 +1,5 @@
 import { formatBytes } from './formatBytes.js';
-import { USER_QUERY, XP_HISTORY_QUERY } from './query.js';
+import { USER_QUERY } from './query.js';
 
 const GRAPHQL_ENDPOINT = 'https://learn.reboot01.com/api/graphql-engine/v1/graphql';
 let headers = {
