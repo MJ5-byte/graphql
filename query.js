@@ -9,6 +9,13 @@ export const USER_QUERY = `
       login
       totalDown
       totalUp
+      groupsByCaptainid {
+        captainId
+        captainLogin
+        createdAt
+        eventId
+        id
+      }
     }
     event_user(where: { eventId: { _in: [72, 20, 250] } }) {
       level
