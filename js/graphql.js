@@ -42,15 +42,3 @@ export const USER_QUERY = `
     }
   }
 `;
-
-export const XP_HISTORY_QUERY = `
-  query XPHistory($userId: ID!) {
-    user(id: $userId) {
-      id
-      transactions(where: {type: {_eq: "xp"}}) {
-        amount
-        createdAt
-      }
-    }
-  }
-`;
